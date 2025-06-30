@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 
@@ -83,28 +82,6 @@ export default function Home() {
       id: 5,
       title: "Youth League Expansion Announced for 2025",
       time: "3 days ago",
-    },
-  ];
-
-  // Mock video data for streams and highlights
-  const videos = [
-    {
-      id: 1,
-      title: "LIVE: Hurricanes vs. Sharks - Championship Game",
-      videoId: "dQw4w9WgXcQ", // Placeholder YouTube video ID
-      isLive: true,
-    },
-    {
-      id: 2,
-      title: "Game Highlights - Lightning vs. Storm",
-      videoId: "jNQXAC9IVRw", // Placeholder YouTube video ID
-      isLive: false,
-    },
-    {
-      id: 3,
-      title: "Player Interview - MVP Season Recap",
-      videoId: "kffacxfA7G4", // Placeholder YouTube video ID
-      isLive: false,
     },
   ];
 
@@ -278,56 +255,6 @@ export default function Home() {
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Live Game Streams & Highlights Section */}
-              <div className="bg-white rounded-lg shadow-md p-6 mt-8">
-                <div className="flex items-center mb-6">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    🎥 Live Game Streams & Highlights
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-                  {videos.map((video) => (
-                    <div key={video.id} className="space-y-3">
-                      {/* Responsive Video Container */}
-                      <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg bg-gray-100">
-                        <iframe
-                          className="absolute top-0 left-0 w-full h-full"
-                          src={`https://www.youtube.com/embed/${video.videoId}?rel=0&modestbranding=1`}
-                          title={video.title}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-
-                      {/* Video Title */}
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-semibold text-gray-800 text-sm leading-tight">
-                          {video.title}
-                        </h3>
-                        {video.isLive && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2 flex-shrink-0">
-                            <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></div>
-                            LIVE
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-gray-200 text-center">
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-800 font-medium text-sm inline-flex items-center"
-                  >
-                    View All Videos & Streams →
-                  </a>
                 </div>
               </div>
             </div>
