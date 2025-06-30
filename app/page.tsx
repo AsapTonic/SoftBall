@@ -106,7 +106,22 @@ export default function Home() {
       videoId: "kffacxfA7G4", // Placeholder YouTube video ID
       isLive: false,
     },
+    {
+      id: 4,
+      title: "Best Plays of the Week - Top 5 Moments",
+      videoId: "M7lc1UVf-VE", // Placeholder YouTube video ID
+      isLive: false,
+    },
+    {
+      id: 5,
+      title: "Season Finale Preview - Championship Bound",
+      videoId: "ZbZSe6N_BXs", // Placeholder YouTube video ID
+      isLive: false,
+    },
   ];
+
+  // Carousel state for video section
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
   // Live score simulation effect
   useEffect(() => {
@@ -175,7 +190,7 @@ export default function Home() {
                   href="#"
                   className="text-white hover:text-yellow-300 transition-colors duration-200 font-medium"
                 >
-                  Home
+                  Contact Us
                 </a>
                 <a
                   href="#"
@@ -200,6 +215,12 @@ export default function Home() {
                   className="text-white hover:text-yellow-300 transition-colors duration-200 font-medium"
                 >
                   Teams
+                </a>
+                <a
+                  href="#"
+                  className="text-white hover:text-yellow-300 transition-colors duration-200 font-medium"
+                >
+                  Shop
                 </a>
               </nav>
             </div>
@@ -290,35 +311,139 @@ export default function Home() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-                  {videos.map((video) => (
-                    <div key={video.id} className="space-y-3">
-                      {/* Responsive Video Container */}
-                      <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg bg-gray-100">
-                        <iframe
-                          className="absolute top-0 left-0 w-full h-full"
-                          src={`https://www.youtube.com/embed/${video.videoId}?rel=0&modestbranding=1`}
-                          title={video.title}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
+                {/* Video Carousel Container */}
+                <div className="relative">
+                  {/* Main Video Display */}
+                  <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg bg-gray-100 mb-4">
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src={`https://www.youtube.com/embed/${videos[currentVideoIndex].videoId}?rel=0&modestbranding=1`}
+                      title={videos[currentVideoIndex].title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
 
-                      {/* Video Title */}
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-semibold text-gray-800 text-sm leading-tight">
-                          {video.title}
-                        </h3>
-                        {video.isLive && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2 flex-shrink-0">
-                            <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></div>
-                            LIVE
-                          </span>
-                        )}
-                      </div>
+                  {/* Video Title and Live Indicator */}
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="font-semibold text-gray-800 text-lg leading-tight">
+                      {videos[currentVideoIndex].title}
+                    </h3>
+                    {videos[currentVideoIndex].isLive && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 ml-2 flex-shrink-0">
+                        <div className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                        LIVE
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Navigation Arrows */}
+                  <div className="flex items-center justify-between mb-4">
+                    <button
+                      onClick={() =>
+                        setCurrentVideoIndex((prev) =>
+                          prev > 0 ? prev - 1 : videos.length - 1
+                        )
+                      }
+                      className="flex items-center justify-center w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors duration-200 shadow-md"
+                      aria-label="Previous video"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
+
+                    <div className="text-sm text-gray-600 font-medium">
+                      {currentVideoIndex + 1} of {videos.length}
                     </div>
-                  ))}
+
+                    <button
+                      onClick={() =>
+                        setCurrentVideoIndex((prev) =>
+                          prev < videos.length - 1 ? prev + 1 : 0
+                        )
+                      }
+                      className="flex items-center justify-center w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors duration-200 shadow-md"
+                      aria-label="Next video"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Dot Indicators */}
+                  <div className="flex justify-center space-x-2 mb-4">
+                    {videos.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentVideoIndex(index)}
+                        className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+                          index === currentVideoIndex
+                            ? "bg-blue-600"
+                            : "bg-gray-300 hover:bg-gray-400"
+                        }`}
+                        aria-label={`Go to video ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Horizontal Scrollable Thumbnail Strip */}
+                  <div className="overflow-x-auto scroll-smooth">
+                    <div className="flex space-x-3 pb-2">
+                      {videos.map((video, index) => (
+                        <button
+                          key={video.id}
+                          onClick={() => setCurrentVideoIndex(index)}
+                          className={`flex-shrink-0 w-32 p-2 rounded-lg border-2 transition-all duration-200 ${
+                            index === currentVideoIndex
+                              ? "border-blue-500 bg-blue-50"
+                              : "border-gray-200 hover:border-gray-300 bg-white"
+                          }`}
+                        >
+                          <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded bg-gray-100 mb-2">
+                            <img
+                              className="absolute top-0 left-0 w-full h-full object-cover"
+                              src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`}
+                              alt={video.title}
+                            />
+                            {video.isLive && (
+                              <div className="absolute top-1 right-1">
+                                <span className="inline-flex items-center px-1 py-0.5 rounded text-xs font-medium bg-red-600 text-white">
+                                  <div className="w-1 h-1 bg-white rounded-full mr-1 animate-pulse"></div>
+                                  LIVE
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-700 leading-tight line-clamp-2">
+                            {video.title}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-gray-200 text-center">
