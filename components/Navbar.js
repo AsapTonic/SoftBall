@@ -36,7 +36,7 @@ const Navbar = () => {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-yellow-400">
-                🥎 USVI SOFTBALL
+                USVI SOFTBALL
               </span>
             </Link>
           </div>

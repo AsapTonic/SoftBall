@@ -37,6 +37,7 @@ export default function Home() {
   ]);
 
   const [currentTeamFilter, setCurrentTeamFilter] = useState("All");
+  const [currentVideo, setCurrentVideo] = useState(0);
 
   // Live score updates
   useEffect(() => {
@@ -74,23 +75,27 @@ export default function Home() {
     {
       title: "Championship Finals Set for August 15th",
       time: "2 hours ago",
-      image: "📺",
+      image: "News",
     },
     {
       title: "Player Spotlight: Maria Rodriguez",
       time: "5 hours ago",
-      image: "⭐",
+      image: "News",
     },
-    { title: "New Season Registration Opens", time: "1 day ago", image: "📝" },
+    {
+      title: "New Season Registration Opens",
+      time: "1 day ago",
+      image: "News",
+    },
     {
       title: "Hurricane Game Postponed Due to Weather",
       time: "2 days ago",
-      image: "🌧️",
+      image: "News",
     },
     {
       title: "Youth League Tournament Results",
       time: "3 days ago",
-      image: "🏆",
+      image: "News",
     },
   ];
 
@@ -119,6 +124,29 @@ export default function Home() {
       event: "Championship Finals",
       venue: "Main Stadium",
     },
+  ];
+
+  const videos = [
+    {
+      id: 1,
+      title: "Hurricanes vs Sharks - LIVE",
+      isLive: true,
+      duration: "Live Now",
+    },
+    {
+      id: 2,
+      title: "Best Catches of the Season",
+      isLive: false,
+      duration: "3:45",
+    },
+    {
+      id: 3,
+      title: "Championship Highlights",
+      isLive: false,
+      duration: "5:22",
+    },
+    { id: 4, title: "Player Interviews", isLive: false, duration: "8:15" },
+    { id: 5, title: "Training Camp Footage", isLive: false, duration: "4:30" },
   ];
 
   return (
@@ -173,25 +201,25 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-600"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600"></div>
       </section>
 
       {/* Main Content Grid */}
       <main className="bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-8">
-              
               {/* Live & Upcoming Games */}
               <section className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">⚾ Live & Upcoming Games</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                  Live & Upcoming Games
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {liveGames.map((game) => (
                     <div
                       key={game.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                      className="border border-slate-900 rounded-lg p-4 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center space-x-3">
@@ -235,28 +263,95 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* Upcoming Events */}
+              {/* Live Game Streams & Highlights */}
               <section className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                  🗓️ Upcoming Events
+                  Live Game Streams & Highlights
+                </h2>
+                <div className="space-y-4">
+                  {/* Main Video Player */}
+                  <div className="relative">
+                    <div className="bg-gray-200 rounded-lg aspect-video flex items-center justify-center text-4xl relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-400"></div>
+                      <div className="relative z-10 text-gray-500 text-sm">
+                        Video Player
+                      </div>
+                      {videos[currentVideo]?.isLive && (
+                        <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                          LIVE
+                        </div>
+                      )}
+                      <div className="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white px-3 py-1 rounded text-sm font-medium">
+                        {videos[currentVideo]?.title}
+                      </div>
+                      <div className="absolute bottom-4 right-4 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
+                        {videos[currentVideo]?.duration}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Video Thumbnails */}
+                  <div className="flex space-x-3 overflow-x-auto pb-2">
+                    {videos.map((video, index) => (
+                      <div
+                        key={video.id}
+                        onClick={() => setCurrentVideo(index)}
+                        className={`relative flex-shrink-0 w-24 h-16 bg-gray-200 rounded-lg cursor-pointer flex items-center justify-center text-lg border-2 transition-all duration-200 hover:scale-105 ${
+                          currentVideo === index
+                            ? "border-green-500 shadow-md"
+                            : "border-transparent hover:border-gray-300"
+                        }`}
+                      >
+                        <div className="text-xs text-gray-500">Video</div>
+                        {video.isLive && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                        )}
+                        <div className="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white px-1 py-0.5 rounded text-xs">
+                          {video.duration}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Video Navigation */}
+                  <div className="flex justify-center space-x-2">
+                    {videos.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentVideo(index)}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          currentVideo === index
+                            ? "bg-green-500"
+                            : "bg-gray-300 hover:bg-gray-400"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Upcoming Events */}
+              <section className="bg-slate-900 rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-yellow-600 mb-6">
+                  Upcoming Events
                 </h2>
                 <div className="space-y-4">
                   {upcomingEvents.map((event, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-black-50 transition-colors"
                     >
                       <div className="flex items-center space-x-4">
                         <div className="text-center">
-                          <div className="text-sm font-bold text-green-600">
+                          <div className="text-sm font-bold text-yellow-600">
                             {event.date}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-white-500">
                             {event.time}
                           </div>
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-800">
+                          <div className="font-semibold text-white-800">
                             {event.event}
                           </div>
                           <div className="text-sm text-gray-600">
@@ -270,68 +365,17 @@ export default function Home() {
                 <div className="mt-6 text-center">
                   <Link
                     href="/schedule"
-                    className="text-green-600 hover:text-green-700 font-semibold"
+                    className="text-yellw-600 hover:text-yellow-700 font-semibold"
                   >
                     View Full Schedule →
                   </Link>
                 </div>
               </section>
 
-              {/* Team Highlights */}
-              <section className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                  🥎 Team Spotlight
-                </h2>
-                <div className="flex space-x-4 mb-6">
-                  {["All", "Men's", "Women's", "Youth"].map((filter) => (
-                    <button
-                      key={filter}
-                      onClick={() => setCurrentTeamFilter(filter)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentTeamFilter === filter
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }`}
-                    >
-                      {filter}
-                    </button>
-                  ))}
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {mockTeams
-                    .filter(
-                      (team) =>
-                        currentTeamFilter === "All" ||
-                        team.division === currentTeamFilter
-                    )
-                    .map((team, index) => (
-                      <Link
-                        key={index}
-                        href={`/teams/${team.name.toLowerCase()}`}
-                        className="block"
-                      >
-                        <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-center">
-                          <div
-                            className={`w-12 h-12 ${team.color} rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold`}
-                          >
-                            {team.name.charAt(0)}
-                          </div>
-                          <div className="font-semibold text-gray-800">
-                            {team.name}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {team.division}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                </div>
-              </section>
-
               {/* Social Media & Gallery */}
               <section className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                  📸 Social & Media
+                  Social & Media
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="border border-gray-200 rounded-lg p-4">
@@ -339,7 +383,9 @@ export default function Home() {
                       Latest Post
                     </h3>
                     <div className="bg-gray-100 rounded-lg p-4 text-center">
-                      <div className="text-4xl mb-2">📱</div>
+                      <div className="text-sm text-gray-500 mb-2">
+                        Social Post
+                      </div>
                       <p className="text-sm text-gray-600">
                         "Amazing game tonight! Hurricanes pull ahead in the 9th
                         inning! 🥎⚡"
@@ -359,23 +405,21 @@ export default function Home() {
                           key={photo}
                           className="bg-gray-200 rounded-lg aspect-square flex items-center justify-center text-gray-500 hover:bg-gray-300 transition-colors cursor-pointer"
                         >
-                          📷
+                          <span className="text-xs">Photo</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
               </section>
-
             </div>
 
             {/* Right Column - Sidebar */}
             <div className="space-y-6">
-              
               {/* Latest Headlines */}
               <section className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">
-                  📰 Latest Headlines
+                  Latest Headlines
                 </h2>
                 <div className="space-y-4">
                   {mockNews.map((article, index) => (
@@ -385,7 +429,9 @@ export default function Home() {
                       className="block"
                     >
                       <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                        <div className="text-2xl">{article.image}</div>
+                        <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          {article.image}
+                        </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-800 text-sm leading-tight">
                             {article.title}
@@ -403,7 +449,7 @@ export default function Home() {
               {/* Quick Stats */}
               <section className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">
-                  🏆 Quick Stats
+                  Quick Stats
                 </h2>
                 <div className="space-y-3">
                   <div className="flex justify-between">
@@ -425,10 +471,61 @@ export default function Home() {
                 </div>
               </section>
 
+              {/* Team Spotlight */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Team Spotlight
+                </h2>
+                <div className="flex space-x-2 mb-4">
+                  {["All", "Men's", "Women's", "Youth"].map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setCurrentTeamFilter(filter)}
+                      className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                        currentTeamFilter === filter
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {mockTeams
+                    .filter(
+                      (team) =>
+                        currentTeamFilter === "All" ||
+                        team.division === currentTeamFilter
+                    )
+                    .map((team, index) => (
+                      <Link
+                        key={index}
+                        href={`/teams/${team.name.toLowerCase()}`}
+                        className="block"
+                      >
+                        <div className="border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow text-center">
+                          <div
+                            className={`w-8 h-8 ${team.color} rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-xs`}
+                          >
+                            {team.name.charAt(0)}
+                          </div>
+                          <div className="font-semibold text-gray-800 text-xs">
+                            {team.name}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            {team.division}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                </div>
+              </section>
+
               {/* National Team Applications */}
-              <section className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md p-6 text-white">
+              <section className="bg-gradient-to-r from-slate-900 to-slate-900 rounded-lg shadow-md p-6 text-white">
                 <h2 className="text-xl font-bold mb-4">
-                  🚀 National Team Tryouts!
+                  National Team Tryouts!
                 </h2>
                 <p className="text-sm mb-4">
                   Ready to represent the Virgin Islands? Apply now for national
@@ -439,7 +536,7 @@ export default function Home() {
                 </div>
                 <Link
                   href="/apply"
-                  className="inline-block bg-white text-green-600 font-bold py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="inline-block bg-white text-yellow-600 font-bold py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   Apply Now
                 </Link>
@@ -448,7 +545,7 @@ export default function Home() {
               {/* About the League */}
               <section className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">
-                  👋 About the League
+                  About the League
                 </h2>
                 <p className="text-gray-600 text-sm mb-4">
                   The USVI Softball League brings together the best amateur
@@ -463,7 +560,6 @@ export default function Home() {
                   Learn More →
                 </Link>
               </section>
-
             </div>
           </div>
         </div>
@@ -473,7 +569,7 @@ export default function Home() {
       <section className="bg-white py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-gray-800 text-center mb-8">
-            🤝 Our Valued Partners
+            Our Valued Partners
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
             {[1, 2, 3, 4, 5, 6].map((sponsor) => (
@@ -481,7 +577,7 @@ export default function Home() {
                 key={sponsor}
                 className="bg-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow"
               >
-                <div className="text-2xl text-gray-400 mb-2">🏢</div>
+                <div className="text-xs text-gray-400 mb-2">Logo</div>
                 <div className="text-sm font-semibold text-gray-600">
                   Partner {sponsor}
                 </div>
@@ -504,7 +600,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-lg font-bold mb-4">🥎 USVI Softball</h3>
+              <h3 className="text-lg font-bold mb-4">USVI Softball</h3>
               <p className="text-gray-400 text-sm">
                 Building champions and community across the Virgin Islands.
               </p>
@@ -549,22 +645,31 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-3">Contact Info</h4>
               <div className="text-sm text-gray-400 space-y-1">
-                <div>📧 info@usvisoftball.com</div>
-                <div>📞 (340) 555-0123</div>
-                <div>📍 Charlotte Amalie, USVI</div>
+                <div>Email: info@usvisoftball.com</div>
+                <div>Phone: (340) 555-0123</div>
+                <div>Address: Charlotte Amalie, USVI</div>
               </div>
             </div>
             <div>
               <h4 className="font-semibold mb-3">Follow Us</h4>
               <div className="flex space-x-4">
-                <Link href="#" className="text-gray-400 hover:text-white">
-                  📘
+                <Link
+                  href="#"
+                  className="text-gray-400 hover:text-white text-xs"
+                >
+                  Facebook
                 </Link>
-                <Link href="#" className="text-gray-400 hover:text-white">
-                  📸
+                <Link
+                  href="#"
+                  className="text-gray-400 hover:text-white text-xs"
+                >
+                  Instagram
                 </Link>
-                <Link href="#" className="text-gray-400 hover:text-white">
-                  🎥
+                <Link
+                  href="#"
+                  className="text-gray-400 hover:text-white text-xs"
+                >
+                  YouTube
                 </Link>
               </div>
               <div className="mt-4">
