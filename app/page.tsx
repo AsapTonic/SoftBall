@@ -1,727 +1,396 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import Navbar from "../components/Navbar";
+import LiveScoreboardStrip from "../components/LiveScoreboardStrip";
 
 export default function Home() {
-  // Mock data for games - Section A
-  const [games, setGames] = useState([
-    {
-      id: 1,
-      team1: "Hurricanes",
-      team2: "Sharks",
-      team1Score: 5,
-      team2Score: 3,
-      status: "LIVE",
-      inning: "Top 4th",
-      isLive: true,
-    },
-    {
-      id: 2,
-      team1: "Lightning",
-      team2: "Eagles",
-      team1Score: 0,
-      team2Score: 0,
-      status: "Upcoming",
-      time: "7:00 PM",
-      isLive: false,
-    },
-    {
-      id: 3,
-      team1: "Thunder",
-      team2: "Panthers",
-      team1Score: 8,
-      team2Score: 6,
-      status: "Final",
-      inning: "Final",
-      isLive: false,
-    },
-    {
-      id: 4,
-      team1: "Cyclones",
-      team2: "Wolves",
-      team1Score: 2,
-      team2Score: 4,
-      status: "LIVE",
-      inning: "Bot 6th",
-      isLive: true,
-    },
-    {
-      id: 5,
-      team1: "Cobras",
-      team2: "Titans",
-      team1Score: 0,
-      team2Score: 0,
-      status: "Upcoming",
-      time: "8:30 PM",
-      isLive: false,
-    },
-    {
-      id: 6,
-      team1: "Storm",
-      team2: "Blazers",
-      team1Score: 7,
-      team2Score: 9,
-      status: "Final",
-      inning: "Final",
-      isLive: false,
-    },
-    {
-      id: 7,
-      team1: "Pirates",
-      team2: "Knights",
-      team1Score: 3,
-      team2Score: 1,
-      status: "LIVE",
-      inning: "Top 7th",
-      isLive: true,
-    },
-    {
-      id: 8,
-      team1: "Warriors",
-      team2: "Rangers",
-      team1Score: 0,
-      team2Score: 0,
-      status: "Upcoming",
-      time: "9:15 PM",
-      isLive: false,
-    },
-    {
-      id: 9,
-      team1: "Dolphins",
-      team2: "Marlins",
-      team1Score: 4,
-      team2Score: 2,
-      status: "Final",
-      inning: "Final",
-      isLive: false,
-    },
-    {
-      id: 10,
-      team1: "Vipers",
-      team2: "Raptors",
-      team1Score: 6,
-      team2Score: 6,
-      status: "LIVE",
-      inning: "Bot 9th",
-      isLive: true,
-    },
-    {
-      id: 11,
-      team1: "Bulls",
-      team2: "Lions",
-      team1Score: 0,
-      team2Score: 0,
-      status: "Upcoming",
-      time: "10:00 PM",
-      isLive: false,
-    },
-    {
-      id: 12,
-      team1: "Phoenix",
-      team2: "Falcons",
-      team1Score: 12,
-      team2Score: 8,
-      status: "Final",
-      inning: "Final",
-      isLive: false,
-    }
+  const [liveGames, setLiveGames] = useState([
+    { id: 1, team1: { name: 'Hurricanes', score: 7 }, team2: { name: 'Sharks', score: 5 }, status: 'LIVE', inning: '8th' },
+    { id: 2, team1: { name: 'Eagles', score: 3 }, team2: { name: 'Tigers', score: 9 }, status: 'LIVE', inning: '6th' },
+    { id: 3, team1: { name: 'Lions', score: 2 }, team2: { name: 'Panthers', score: 1 }, status: 'FINAL', inning: 'Final' },
+    { id: 4, team1: { name: 'Cobras', score: 0 }, team2: { name: 'Wolves', score: 0 }, status: '8:00 PM', inning: 'Tonight' }
   ]);
 
-  // Mock data for news headlines - Section B
-  const headlines = [
-    {
-      id: 1,
-      title: "Hurricanes Win Championship!",
-      summary: "Local team takes home the trophy after thrilling playoff run",
-    },
-    {
-      id: 2,
-      title: "Player Spotlight: Randi Foy Dominates",
-      summary: "Star pitcher leads league in strikeouts this season",
-    },
-    {
-      id: 3,
-      title: "Season Kicks Off Next Week",
-      summary: "New season brings exciting matchups and fresh talent",
-    },
-    {
-      id: 4,
-      title: "Field Renovations Complete",
-      summary: "Upgraded facilities ready for the upcoming season",
-    },
-  ];
+  const [currentTeamFilter, setCurrentTeamFilter] = useState('All');
 
-  // Mock data for stats - Section C
-  const battingLeaders = [
-    { name: "Marcus Rodriguez", avg: ".387" },
-    { name: "Sarah Johnson", avg: ".362" },
-    { name: "David Thompson", avg: ".341" },
-    { name: "Lisa Martinez", avg: ".329" },
-    { name: "Kevin Williams", avg: ".318" },
-  ];
-
-  const pitchingLeaders = [
-    { name: "Randi Foy", era: "1.42" },
-    { name: "Michael Chang", era: "1.89" },
-    { name: "Amanda Davis", era: "2.15" },
-    { name: "Carlos Rivera", era: "2.43" },
-    { name: "Jennifer Lee", era: "2.67" },
-  ];
-
-  const standings = [
-    { team: "Hurricanes", wins: 18, losses: 4 },
-    { team: "Lightning", wins: 16, losses: 6 },
-    { team: "Eagles", wins: 14, losses: 8 },
-    { team: "Thunder", wins: 12, losses: 10 },
-    { team: "Panthers", wins: 10, losses: 12 },
-  ];
-
-  // Newsletter signup state
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  // Live score simulation effect
+  // Live score updates
   useEffect(() => {
     const interval = setInterval(() => {
-      setGames((prevGames) =>
-        prevGames.map((game) => {
-          if (game.isLive) {
-            // Randomly update scores for live games
-            const shouldUpdate = Math.random() < 0.3; // 30% chance to update each interval
-            if (shouldUpdate) {
-              const updateTeam1 = Math.random() < 0.5;
-              return {
-                ...game,
-                team1Score: updateTeam1 ? game.team1Score + 1 : game.team1Score,
-                team2Score: !updateTeam1
-                  ? game.team2Score + 1
-                  : game.team2Score,
-              };
-            }
+      setLiveGames(prevGames => 
+        prevGames.map(game => {
+          if (game.status === 'LIVE' && Math.random() < 0.4) {
+            const updateTeam = Math.random() < 0.5 ? 'team1' : 'team2';
+            return {
+              ...game,
+              [updateTeam]: {
+                ...game[updateTeam],
+                score: game[updateTeam].score + 1
+              }
+            };
           }
           return game;
         })
       );
-    }, 4000); // Update every 4 seconds
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    if (email) {
-      console.log("Newsletter signup:", email);
-      setSubscribed(true);
-      setEmail("");
-      setTimeout(() => setSubscribed(false), 3000);
-    }
-  };
+  const mockTeams = [
+    { name: 'Hurricanes', division: 'Men\'s', color: 'bg-red-500' },
+    { name: 'Sharks', division: 'Men\'s', color: 'bg-blue-500' },
+    { name: 'Eagles', division: 'Women\'s', color: 'bg-yellow-500' },
+    { name: 'Tigers', division: 'Women\'s', color: 'bg-orange-500' },
+    { name: 'Lions', division: 'Youth', color: 'bg-green-500' },
+    { name: 'Panthers', division: 'Youth', color: 'bg-purple-500' }
+  ];
+
+  const mockNews = [
+    { title: 'Championship Finals Set for August 15th', time: '2 hours ago', image: '📺' },
+    { title: 'Player Spotlight: Maria Rodriguez', time: '5 hours ago', image: '⭐' },
+    { title: 'New Season Registration Opens', time: '1 day ago', image: '📝' },
+    { title: 'Hurricane Game Postponed Due to Weather', time: '2 days ago', image: '🌧️' },
+    { title: 'Youth League Tournament Results', time: '3 days ago', image: '🏆' }
+  ];
+
+  const upcomingEvents = [
+    { date: 'Aug 12', time: '6:00 PM', event: 'Hurricanes vs Sharks', venue: 'Central Field' },
+    { date: 'Aug 13', time: '7:30 PM', event: 'Eagles vs Tigers', venue: 'North Park' },
+    { date: 'Aug 14', time: '5:00 PM', event: 'Lions vs Panthers', venue: 'South Field' },
+    { date: 'Aug 15', time: '8:00 PM', event: 'Championship Finals', venue: 'Main Stadium' }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-blue-800 text-white shadow-lg">
-        <div className="container mx-auto px-8">
-          <div className="flex items-center py-3">
-            {/* Logo Section */}
-            <div className="flex items-center space-x-2 mr-auto">
-              <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                <span className="text-blue-800 font-bold text-sm">🥎</span>
-              </div>
-              <span className="text-lg font-bold hidden sm:block">USVI SOFTBALL</span>
-            </div>
-
-            {/* Main Navigation and Right Actions */}
-            <div className="flex items-center space-x-8">
-              {/* Main Navigation */}
-              <nav className="hidden lg:flex items-center space-x-8">
-                <a href="#" className="text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  SCORES
-                </a>
-                <a href="#" className="text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  SCHEDULE
-                </a>
-                <a href="#" className="text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  TEAMS
-                </a>
-                <a href="#" className="text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  STANDINGS
-                </a>
-                <a href="#" className="text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  STATS
-                </a>
-                <a href="#" className="text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  NEWS
-                </a>
-                <a href="#" className="text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  PLAYERS
-                </a>
-              </nav>
-
-              {/* Right Actions */}
-              <div className="flex items-center space-x-6">
-                <a href="#" className="hidden md:block text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  WATCH
-                </a>
-                <a href="#" className="hidden md:block text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  TICKETS
-                </a>
-                <a href="#" className="hidden md:block text-sm font-medium hover:text-blue-200 transition-colors uppercase tracking-wide">
-                  SHOP
-                </a>
-                
-                {/* Search Icon */}
-                <button className="p-2 hover:bg-blue-700 rounded transition-colors">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-                
-                {/* Login */}
-                <div className="flex items-center space-x-2">
-                  <span className="hidden sm:block text-sm font-medium uppercase tracking-wide">LOG IN</span>
-                  <div className="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Mobile Menu Button */}
-                <button className="lg:hidden p-2 hover:bg-blue-700 rounded transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Live & Upcoming Games Scoreboard */}
-      <section className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-8 py-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-4">
-              <div className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium">
-                Softball
-              </div>
-              <span className="text-sm font-medium text-gray-800">July 4</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button className="p-1 hover:bg-gray-100 rounded">
-                <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-              <button className="p-1 hover:bg-gray-100 rounded">
-                <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <div className="flex overflow-x-auto space-x-3 pb-2">
-            {games.map((game) => (
-              <div
-                key={game.id}
-                className="flex-shrink-0 border border-gray-200 rounded-lg bg-white min-w-[160px] hover:shadow-md transition-shadow"
-              >
-                {/* Time/Status Header */}
-                <div className="px-3 py-1 border-b border-gray-100 text-center">
-                  <span className="text-xs text-gray-600 font-medium">
-                    {game.isLive ? game.inning : game.status === "Final" ? "FINAL" : game.time}
-                  </span>
-                </div>
-                
-                {/* Teams and Scores */}
-                <div className="px-3 py-2">
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">
-                          {game.team1.charAt(0)}
-                        </span>
-                      </div>
-                      <span className="text-sm font-medium text-gray-800 truncate">
-                        {game.team1.length > 8 ? game.team1.substring(0, 3).toUpperCase() : game.team1.substring(0, 8)}
-                      </span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900 ml-2">
-                      {game.team1Score}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">
-                          {game.team2.charAt(0)}
-                        </span>
-                      </div>
-                      <span className="text-sm font-medium text-gray-800 truncate">
-                        {game.team2.length > 8 ? game.team2.substring(0, 3).toUpperCase() : game.team2.substring(0, 8)}
-                      </span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900 ml-2">
-                      {game.team2Score}
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Live Indicator */}
-                {game.isLive && (
-                  <div className="px-3 pb-2">
-                    <div className="flex items-center justify-center">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse"></div>
-                      <span className="text-xs text-red-600 font-medium">LIVE</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+    <div>
+      <Navbar />
+      <LiveScoreboardStrip />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-teal-600 py-32 overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full opacity-20"></div>
-          <div className="absolute top-32 right-20 w-24 h-24 bg-white rounded-full opacity-15"></div>
-          <div className="absolute bottom-20 left-1/4 w-20 h-20 bg-white rounded-full opacity-25"></div>
-          <div className="absolute bottom-32 right-1/3 w-16 h-16 bg-white rounded-full opacity-20"></div>
+      <section className="relative bg-gray-900 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('glove.jpg')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
         
-        <div className="container mx-auto px-8 text-center relative z-10">
-          {/* Tournament Logo */}
-          <div className="mb-8">
-            <div className="inline-block bg-gradient-to-b from-teal-400 to-teal-600 rounded-full p-1">
-              <div className="bg-blue-900 rounded-full px-8 py-6">
-                <div className="text-white">
-                  <div className="text-xs font-bold tracking-wider mb-1">USVI SOFTBALL</div>
-                  <div className="flex items-center justify-center space-x-2 mb-1">
-                    <span className="text-red-400">⭐</span>
-                    <span className="text-lg font-bold">🥎</span>
-                    <span className="text-red-400">⭐</span>
-                  </div>
-                  <div className="text-sm font-bold text-teal-400">CHAMPIONSHIP</div>
-                  <div className="text-xl font-bold">2025</div>
-                </div>
+        <div className="relative z-10 container mx-auto px-4 py-16 lg:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="text-white">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                Built for the Game.
+                <span className="block text-green-400">
+                  Built for Our Islands.
+                </span>
+              </h1>
+
+              <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
+                The official hub for scores, news, and league action across the
+                Virgin Islands.
+              </p>
+
+              <Link
+                href="/apply"
+                className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors duration-200 transform hover:scale-105"
+              >
+                Apply Now
+              </Link>
+            </div>
+
+            <div className="hidden lg:flex justify-end items-center">
+              <div className="text-right">
+                <div className="text-6xl font-bold text-white/20 mb-4">🥎</div>
+                <div className="text-3xl font-bold text-white/30 tracking-wider">USVI</div>
+                <div className="text-2xl font-bold text-white/30 tracking-wider">SOFTBALL</div>
               </div>
             </div>
           </div>
-          
-          {/* Main Headline */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">
-            CHAMPIONSHIP GAMES SET FOR THE 2025
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-blue-300">
-              USVI SOFTBALL LEAGUE
-            </span>
-          </h1>
-          
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-4 px-8 rounded-lg border-2 border-blue-700 transition-all duration-200 transform hover:scale-105">
-              LEAGUE SCHEDULE →
-            </button>
-            <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-4 px-8 rounded-lg border-2 border-blue-700 transition-all duration-200 transform hover:scale-105">
-              STANDINGS →
-            </button>
-            <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-4 px-8 rounded-lg border-2 border-blue-700 transition-all duration-200 transform hover:scale-105">
-              ALL GAMES →
-            </button>
-          </div>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-600"></div>
       </section>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Main Content Column */}
-          <div className="lg:col-span-2 space-y-12">
-            {/* Live Video Section */}
-            <section className="bg-white rounded-lg shadow-md p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Live Game Stream</h2>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                  <span className="text-red-600 font-medium text-sm">LIVE</span>
-                </div>
-              </div>
+      {/* Main Content Grid */}
+      <main className="bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Left Column - Main Content */}
+            <div className="lg:col-span-2 space-y-8">
               
-              {/* Check if there are any live games */}
-              {games.some(game => game.isLive) ? (
-                <div className="space-y-4">
-                  {/* Video Player */}
-                  <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg bg-gray-900">
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&rel=0&modestbranding=1"
-                      title="Live Game Stream"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                  
-                  {/* Game Info */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-bold text-lg text-gray-800">
-                          {games.find(game => game.isLive)?.team1} vs {games.find(game => game.isLive)?.team2}
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          {games.find(game => game.isLive)?.inning}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="flex space-x-4">
+              {/* Live & Upcoming Games */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">⚾ Live & Upcoming Games</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {liveGames.map((game) => (
+                    <div key={game.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
                           <div className="text-center">
-                            <div className="font-bold text-2xl text-blue-600">
-                              {games.find(game => game.isLive)?.team1Score}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              {games.find(game => game.isLive)?.team1}
-                            </div>
+                            <div className="text-sm font-bold text-gray-800">{game.team1.name}</div>
+                            <div className="text-xl font-bold text-gray-900">{game.team1.score}</div>
                           </div>
+                          <div className="text-gray-400 text-sm">vs</div>
                           <div className="text-center">
-                            <div className="font-bold text-2xl text-blue-600">
-                              {games.find(game => game.isLive)?.team2Score}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              {games.find(game => game.isLive)?.team2}
-                            </div>
+                            <div className="text-sm font-bold text-gray-800">{game.team2.name}</div>
+                            <div className="text-xl font-bold text-gray-900">{game.team2.score}</div>
                           </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                            game.status === 'LIVE' ? 'bg-red-100 text-red-800' : 
+                            game.status === 'FINAL' ? 'bg-gray-100 text-gray-800' : 
+                            'bg-blue-100 text-blue-800'
+                          }`}>
+                            {game.status}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">{game.inning}</div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Stream Controls */}
-                  <div className="flex justify-between items-center text-sm text-gray-600">
-                    <div className="flex items-center space-x-4">
-                      <span>🎥 HD Quality</span>
-                      <span>👥 2,847 viewers</span>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-                        Full Screen
-                      </button>
-                      <button className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
-                        Share
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">📺</span>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-2">No Live Games</h3>
-                  <p className="text-gray-600">Check back later for live game streams!</p>
-                </div>
-              )}
-            </section>
+              </section>
 
-            {/* Player Stats Section */}
-            <section className="bg-white rounded-lg shadow-md p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Featured Players</h2>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                  View All Players →
-                </button>
-              </div>
-              
-              <div className="flex overflow-x-auto space-x-4 pb-2">
-                {[
-                  { name: "Marcus Rodriguez", team: "Hurricanes", position: "P", avg: ".387", image: "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=150&h=150&fit=crop&crop=face" },
-                  { name: "Sarah Johnson", team: "Lightning", position: "C", avg: ".362", image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" },
-                  { name: "David Thompson", team: "Eagles", position: "1B", avg: ".341", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" },
-                  { name: "Lisa Martinez", team: "Thunder", position: "SS", avg: ".329", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face" },
-                  { name: "Kevin Williams", team: "Panthers", position: "OF", avg: ".318", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" },
-                  { name: "Randi Foy", team: "Hurricanes", position: "P", era: "1.42", image: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face" },
-                  { name: "Michael Chang", team: "Lightning", position: "P", era: "1.89", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face" },
-                  { name: "Amanda Davis", team: "Eagles", position: "P", era: "2.15", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face" },
-                  { name: "Carlos Rivera", team: "Thunder", position: "P", era: "2.43", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face" }
-                ].map((player, index) => (
-                  <div key={index} className="flex-shrink-0 text-center bg-gray-50 rounded-lg p-4 min-w-[140px] hover:bg-gray-100 transition-colors">
-                    <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-200">
-                      <img 
-                        src={player.image} 
-                        alt={player.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(player.name)}&background=3b82f6&color=fff&size=64`;
-                        }}
-                      />
+              {/* Upcoming Events */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">🗓️ Upcoming Events</h2>
+                <div className="space-y-4">
+                  {upcomingEvents.map((event, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center space-x-4">
+                        <div className="text-center">
+                          <div className="text-sm font-bold text-green-600">{event.date}</div>
+                          <div className="text-xs text-gray-500">{event.time}</div>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-800">{event.event}</div>
+                          <div className="text-sm text-gray-600">{event.venue}</div>
+                        </div>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-sm text-gray-800 mb-1 leading-tight">
-                      {player.name.split(' ')[0]}<br />{player.name.split(' ')[1]}
-                    </h3>
-                    <div className="text-xs text-gray-600 mb-2">
-                      {player.team} • {player.position}
-                    </div>
-                    <div className="text-xs font-bold text-blue-600 mb-3">
-                      {player.avg ? `AVG ${player.avg}` : `ERA ${player.era}`}
-                    </div>
-                    <button className="w-full bg-blue-600 text-white text-xs font-medium py-2 px-3 rounded hover:bg-blue-700 transition-colors">
-                      Follow
+                  ))}
+                </div>
+                <div className="mt-6 text-center">
+                  <Link href="/schedule" className="text-green-600 hover:text-green-700 font-semibold">
+                    View Full Schedule →
+                  </Link>
+                </div>
+              </section>
+
+              {/* Team Highlights */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">🥎 Team Spotlight</h2>
+                <div className="flex space-x-4 mb-6">
+                  {['All', 'Men\'s', 'Women\'s', 'Youth'].map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setCurrentTeamFilter(filter)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        currentTeamFilter === filter 
+                          ? 'bg-green-600 text-white' 
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      {filter}
                     </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {mockTeams
+                    .filter(team => currentTeamFilter === 'All' || team.division === currentTeamFilter)
+                    .map((team, index) => (
+                    <Link key={index} href={`/teams/${team.name.toLowerCase()}`} className="block">
+                      <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-center">
+                        <div className={`w-12 h-12 ${team.color} rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold`}>
+                          {team.name.charAt(0)}
+                        </div>
+                        <div className="font-semibold text-gray-800">{team.name}</div>
+                        <div className="text-sm text-gray-600">{team.division}</div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+
+              {/* Social Media & Gallery */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">📸 Social & Media</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-800 mb-3">Latest Post</h3>
+                    <div className="bg-gray-100 rounded-lg p-4 text-center">
+                      <div className="text-4xl mb-2">📱</div>
+                      <p className="text-sm text-gray-600">
+                        "Amazing game tonight! Hurricanes pull ahead in the 9th inning! 🥎⚡"
+                      </p>
+                      <div className="text-xs text-gray-500 mt-2">@USVISoftball • 2 hours ago</div>
+                    </div>
                   </div>
-                ))}
-              </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-3">Recent Photos</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[1, 2, 3, 4].map((photo) => (
+                        <div key={photo} className="bg-gray-200 rounded-lg aspect-square flex items-center justify-center text-gray-500 hover:bg-gray-300 transition-colors cursor-pointer">
+                          📷
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+
+            {/* Right Column - Sidebar */}
+            <div className="space-y-6">
               
-              <div className="mt-4 text-center">
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                  See More Players
-                </button>
-              </div>
-            </section>
-
-            {/* Section B: Latest Headlines */}
-            <section className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                Latest Headlines
-              </h2>
-              <div className="space-y-4">
-                {headlines.map((headline) => (
-                  <article
-                    key={headline.id}
-                    className="border-b border-gray-200 pb-4 last:border-b-0"
-                  >
-                    <h3 className="text-lg font-semibold mb-2">
-                      <a
-                        href="#"
-                        className="text-blue-800 hover:text-blue-600 transition-colors"
-                      >
-                        {headline.title}
-                      </a>
-                    </h3>
-                    <p className="text-gray-600 text-sm">{headline.summary}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-12">
-            {/* Section C: Key Stats */}
-            <section className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-xl font-bold mb-6 text-gray-800">
-                League Leaders
-              </h2>
-
-              {/* Batting Leaders */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-3 text-blue-800">
-                  Batting Average
-                </h3>
-                <div className="space-y-2">
-                  {battingLeaders.map((player, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center text-sm"
-                    >
-                      <span className="font-medium">{player.name}</span>
-                      <span className="text-orange-600 font-bold">
-                        {player.avg}
-                      </span>
-                    </div>
+              {/* Latest Headlines */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">📰 Latest Headlines</h2>
+                <div className="space-y-4">
+                  {mockNews.map((article, index) => (
+                    <Link key={index} href={`/news/${index + 1}`} className="block">
+                      <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div className="text-2xl">{article.image}</div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-800 text-sm leading-tight">{article.title}</h3>
+                          <p className="text-xs text-gray-500 mt-1">{article.time}</p>
+                        </div>
+                      </div>
+                    </Link>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              {/* Pitching Leaders */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-3 text-blue-800">
-                  Earned Run Average
-                </h3>
-                <div className="space-y-2">
-                  {pitchingLeaders.map((player, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center text-sm"
-                    >
-                      <span className="font-medium">{player.name}</span>
-                      <span className="text-orange-600 font-bold">
-                        {player.era}
-                      </span>
-                    </div>
-                  ))}
+              {/* Quick Stats */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">🏆 Quick Stats</h2>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Teams Playing:</span>
+                    <span className="font-semibold">12</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Games This Week:</span>
+                    <span className="font-semibold">8</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Season Games:</span>
+                    <span className="font-semibold">144</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Championship:</span>
+                    <span className="font-semibold text-green-600">Aug 15</span>
+                  </div>
                 </div>
-              </div>
+              </section>
 
-              {/* Quick Standings */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3 text-blue-800">
-                  Quick Standings
-                </h3>
-                <div className="space-y-2">
-                  {standings.map((team, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center text-sm"
-                    >
-                      <span className="font-medium">{team.team}</span>
-                      <span className="text-gray-600">
-                        {team.wins}-{team.losses}
-                      </span>
-                    </div>
-                  ))}
+              {/* National Team Applications */}
+              <section className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md p-6 text-white">
+                <h2 className="text-xl font-bold mb-4">🚀 National Team Tryouts!</h2>
+                <p className="text-sm mb-4">
+                  Ready to represent the Virgin Islands? Apply now for national team tryouts!
+                </p>
+                <div className="text-sm mb-4">
+                  <span className="font-semibold">Deadline: Aug 31st</span>
                 </div>
-              </div>
-            </section>
+                <Link 
+                  href="/apply" 
+                  className="inline-block bg-white text-green-600 font-bold py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  Apply Now
+                </Link>
+              </section>
 
-            {/* Section D: Newsletter Signup */}
-            <section className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-xl font-bold mb-4 text-gray-800">
-                Stay Updated!
-              </h2>
-              <p className="text-gray-600 mb-4 text-sm">
-                Get the latest news, scores, and updates from the USVI Softball
-                League delivered to your inbox.
-              </p>
+              {/* About the League */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">👋 About the League</h2>
+                <p className="text-gray-600 text-sm mb-4">
+                  The USVI Softball League brings together the best amateur talent across St. Thomas, St. John, and St. Croix. Founded in 1985, we're committed to promoting athletic excellence and island pride.
+                </p>
+                <Link href="/about" className="text-green-600 hover:text-green-700 font-semibold text-sm">
+                  Learn More →
+                </Link>
+              </section>
 
-              {subscribed ? (
-                <div className="bg-green-100 border border-green-300 rounded-lg p-4 text-center">
-                  <p className="text-green-700 font-medium">
-                    Thank you for subscribing!
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleNewsletterSubmit} className="space-y-4">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors font-medium"
-                  >
-                    Subscribe
-                  </button>
-                </form>
-              )}
-            </section>
+            </div>
           </div>
         </div>
       </main>
 
+      {/* Sponsors Section */}
+      <section className="bg-white py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-gray-800 text-center mb-8">🤝 Our Valued Partners</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
+            {[1, 2, 3, 4, 5, 6].map((sponsor) => (
+              <div key={sponsor} className="bg-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                <div className="text-2xl text-gray-400 mb-2">🏢</div>
+                <div className="text-sm font-semibold text-gray-600">Partner {sponsor}</div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/sponsorship" className="text-green-600 hover:text-green-700 font-semibold">
+              Become a Sponsor →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2025 USVI Softball League. All rights reserved.</p>
+      <footer className="bg-gray-800 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-lg font-bold mb-4">🥎 USVI Softball</h3>
+              <p className="text-gray-400 text-sm">
+                Building champions and community across the Virgin Islands.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3">Quick Links</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/teams" className="text-gray-400 hover:text-white">Teams</Link></li>
+                <li><Link href="/schedule" className="text-gray-400 hover:text-white">Schedule</Link></li>
+                <li><Link href="/apply" className="text-gray-400 hover:text-white">Apply</Link></li>
+                <li><Link href="/contact" className="text-gray-400 hover:text-white">Contact</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3">Contact Info</h4>
+              <div className="text-sm text-gray-400 space-y-1">
+                <div>📧 info@usvisoftball.com</div>
+                <div>📞 (340) 555-0123</div>
+                <div>📍 Charlotte Amalie, USVI</div>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3">Follow Us</h4>
+              <div className="flex space-x-4">
+                <Link href="#" className="text-gray-400 hover:text-white">📘</Link>
+                <Link href="#" className="text-gray-400 hover:text-white">📸</Link>
+                <Link href="#" className="text-gray-400 hover:text-white">🎥</Link>
+              </div>
+              <div className="mt-4">
+                <input 
+                  type="email" 
+                  placeholder="Newsletter signup" 
+                  className="w-full px-3 py-2 bg-gray-700 text-white rounded-md text-sm"
+                />
+                <button className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md text-sm">
+                  Subscribe
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+            <p>&copy; 2024 USVI Softball League. All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </div>
