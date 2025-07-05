@@ -84,7 +84,7 @@ const Navbar = () => {
             {/* Apply Button */}
             <button
               onClick={handleSignIn}
-              className="bg-yellow-400 hover:bg-yellow-300 text-blue-700 px-6 py-3 rounded-full text-lg font-semibold transition-colors duration-200"
+              className="bg-yellow-600 hover:bg-blue-700 text-white-700 px-6 py-3 rounded-full text-lg font-semibold transition-colors duration-200"
             >
               APPLY
             </button>

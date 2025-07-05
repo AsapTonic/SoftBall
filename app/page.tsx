@@ -161,7 +161,14 @@ export default function Home() {
             </div>
 
             <div className="hidden lg:flex justify-end items-center">
-              <div className="text-right"></div>
+              <div className="text-right mr-[-150px]">
+                <img
+                  src="/ChatGPT.png"
+                  alt="USVI Softball League Logo"
+                  className="w-[600px] h-[600px] object-contain opacity-90"
+                  style={{ background: "none", backgroundColor: "transparent" }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -173,13 +180,13 @@ export default function Home() {
       <main className="bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-8">
+              
               {/* Live & Upcoming Games */}
               <section className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                  ⚾ Live & Upcoming Games
-                </h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">⚾ Live & Upcoming Games</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {liveGames.map((game) => (
                     <div
@@ -359,10 +366,12 @@ export default function Home() {
                   </div>
                 </div>
               </section>
+
             </div>
 
             {/* Right Column - Sidebar */}
             <div className="space-y-6">
+              
               {/* Latest Headlines */}
               <section className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">
@@ -454,6 +463,7 @@ export default function Home() {
                   Learn More →
                 </Link>
               </section>
+
             </div>
           </div>
         </div>
