@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import LiveScoreboardStrip from "../components/LiveScoreboardStrip";
+import PlayerSection from "../components/PlayerSection";
 
 export default function Home() {
   const [liveGames, setLiveGames] = useState([
@@ -462,80 +463,42 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* Social Media & Gallery - IMPROVEMENTS: Visuals, call to action */}
-              <section className="bg-white rounded-xl shadow-lg p-6">
-                {" "}
-                {/* Consistent styling */}
-                <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 pb-3 border-yellow-400">
+              {/* Social Media & Gallery */}
+              <section className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">
                   Social & Media
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {" "}
-                  {/* Increased gap */}
-                  <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow card-hover">
-                    {" "}
-                    {/* Consistent border, padding, hover */}
-                    <h3 className="font-semibold text-gray-800 mb-4 text-xl">
-                      {" "}
-                      {/* Increased font size */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-800 mb-3">
                       Latest Post
                     </h3>
-                    <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-100">
-                      {" "}
-                      {/* Subtle background and border */}
-                      <div className="text-xs text-gray-500 mb-2 font-medium">
-                        SOCIAL MEDIA UPDATE
+                    <div className="bg-gray-100 rounded-lg p-4 text-center">
+                      <div className="text-sm text-gray-500 mb-2">
+                        Social Post
                       </div>
-                      <p className="text-base text-gray-700 leading-relaxed italic">
-                        {" "}
-                        {/* Increased font size, added italic */}
-                        &quot;Amazing game tonight! Hurricanes pull ahead in the
-                        9th inning! 🥎⚡ Follow us for live updates!&quot;
+                      <p className="text-sm text-gray-600">
+                        "Amazing game tonight! Hurricanes pull ahead in the 9th
+                        inning! 🥎⚡"
                       </p>
-                      <div className="text-xs text-gray-500 mt-3 font-semibold">
+                      <div className="text-xs text-gray-500 mt-2">
                         @USVISoftball • 2 hours ago
                       </div>
-                      <Link
-                        href="#"
-                        className="mt-4 inline-block text-yellow-600 hover:text-yellow-700 font-semibold text-sm"
-                      >
-                        {" "}
-                        {/* Added a link to full post */}
-                        View Post →
-                      </Link>
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800 mb-4 text-xl">
+                    <h3 className="font-semibold text-gray-800 mb-3">
                       Recent Photos
                     </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {" "}
-                      {/* Increased gap */}
+                    <div className="grid grid-cols-2 gap-2">
                       {[1, 2, 3, 4].map((photo) => (
                         <div
                           key={photo}
-                          className="bg-gray-200 rounded-lg aspect-square flex items-center justify-center text-gray-500 hover:bg-gray-300 transition-colors cursor-pointer group relative overflow-hidden" // Added group and overflow-hidden for image hover
+                          className="bg-gray-200 rounded-lg aspect-square flex items-center justify-center text-gray-500 hover:bg-gray-300 transition-colors cursor-pointer"
                         >
-                          {/* Placeholder for images - ideally, use actual image tags here */}
-                          <img
-                            src={`/placeholder-softball-${photo}.jpg`}
-                            alt={`Softball Photo ${photo}`}
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                          <div className="relative z-10 text-white text-sm bg-black/40 p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            View Photo
-                          </div>
+                          <span className="text-xs">Photo</span>
                         </div>
                       ))}
-                    </div>
-                    <div className="mt-6 text-center">
-                      <Link
-                        href="/gallery"
-                        className="text-yellow-600 hover:text-yellow-700 font-semibold"
-                      >
-                        View Full Gallery →
-                      </Link>
                     </div>
                   </div>
                 </div>
@@ -764,63 +727,39 @@ export default function Home() {
                   </svg>
                 </Link>
               </section>
+
+              {/* Player Section */}
+              <PlayerSection />
             </div>
           </div>
         </div>
       </main>
 
-      {/* Sponsors Section - IMPROVEMENTS: Visuals, call to action */}
+      {/* Sponsors Section */}
       <section className="bg-white py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-800 text-center mb-10 border-b-2 pb-3 border-yellow-400 inline-block mx-auto">
-            {" "}
-            {/* Increased font size, added border and centering */}
+          <h2 className="text-2xl font-bold text-gray-800 text-center mb-8">
             Our Valued Partners
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center mt-8">
-            {" "}
-            {/* Adjusted gap and margin-top */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
             {[1, 2, 3, 4, 5, 6].map((sponsor) => (
               <div
                 key={sponsor}
-                className="bg-gray-50 rounded-lg p-6 text-center hover:shadow-lg transition-shadow card-hover border border-gray-100" // Adjusted bg-color, shadow, added border
+                className="bg-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow"
               >
-                {/* Placeholder for actual sponsor logos */}
-                <img
-                  src={`/sponsor-logo-${sponsor}.png`}
-                  alt={`Partner ${sponsor} Logo`}
-                  className="mx-auto h-16 object-contain mb-3"
-                />
-                <div className="text-sm font-semibold text-gray-700">
-                  {" "}
-                  {/* Adjusted color */}
+                <div className="text-xs text-gray-400 mb-2">Logo</div>
+                <div className="text-sm font-semibold text-gray-600">
                   Partner {sponsor}
                 </div>
               </div>
             ))}
           </div>
-          <div className="text-center mt-10">
-            {" "}
-            {/* Increased mt */}
+          <div className="text-center mt-8">
             <Link
               href="/sponsorship"
-              className="text-yellow-600 hover:text-yellow-700 font-bold text-lg inline-flex items-center group" // Adjusted color, added inline-flex and group for arrow animation
+              className="text-gray-800 hover:text-yellow-700 font-semibold"
             >
-              Become a Sponsor
-              <svg
-                className="ml-2 w-6 h-6 transition-transform group-hover:translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                ></path>
-              </svg>
+              Become a Sponsor →
             </Link>
           </div>
         </div>
